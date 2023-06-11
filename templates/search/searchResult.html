@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+
+    <a class="navbar-brand active" href="/Paper">PaperNow</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/Paper">返回主页 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/Paper/display?page=1">论文收藏</a>
+              </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/Paper/recommend">论文推荐</a>
+            </li>
+
+
+        </ul>
+        {% if status %}
+        <form method="get" action="{% url 'logout' %}">
+            <button class="btn btn-outline-success my-2 my-sm-0" type='submit'>登出</button>
+        </form>
+        {% else %}
+        <form method="get" action="{% url 'login' %}">
+            <button class="btn btn-outline-success my-2 my-sm-0" type='submit'>登录</button>
+        </form>
+        {% endif %}
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" link="{% url 'login' %}">Login</button> -->
+        
+        
+
+    </div>
+</nav>
+<br/><br/>
+
+<br/>
+<div class="row">
+    <!-- <div class="col-1">
+        <img src="/static/logo.jpg" width="250" height="80">
+    </div> -->
+
+    <div class="col"><br/>
+        <form onsubmit="getKey();return false;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-6">
+                        <input type="text" class="form-control" id="input" 
+                               placeholder="Keywords here" value="{{keyword}}" width="1200">
+                    </div>
+                    <div class="col">
+                        <a href="" class="btn btn-primary" role="button" onclick="getKey();return false;"> 搜索 </a>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+        <br/>
+
+        <div class="container">
+            <div class="form-check form-check-inline">
+
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"
+                       {% if modeAll %}checked{% endif %} onchange="searchAll();return false;">
+
+                <label class="form-check-label" for="inlineRadio1">按相关性</label>
+            </div>
+            <div class="form-check form-check-inline">
+
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option1"
+                       {% if modeCite %}checked{% endif %} onchange="searchByCite();return false;">
+
+                <label class="form-check-label" for="inlineRadio2">按引用量</label>
+            </div>
+            <div class="form-check form-check-inline">
+
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option1"
+                       {% if modeTime %}checked{% endif %} onchange="searchByTime();return false;">
+
+                <label class="form-check-label" for="inlineRadio3">按时间</label>
+
+            </div>
+
+
+            <!-- <button class="btn btn-outline-dark" type="button" data-toggle="collapse" data-target="#collapseExample"
+                    aria-expanded="false" aria-controls="collapseExample">
+                高级搜索选项
+            </button>
+
+            <div class="collapse" id="collapseExample">
+                <br/>
+                起始时间:&emsp;<input type="date" class="span1" id="start">&emsp;
+                终止时间:&emsp;<input type="date" class="span2" id="end">&emsp;
+                &emsp;&emsp;
+                <button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+                        data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"
+                        onclick="searchAd();return false;">
+                    确定
+                </button>
+                <br/>
+
+
+            </div> -->
+
+
+            <br/>
+            <br/>
+            {%if list %}
+            <h5>搜索到 {{num}} 条结果 用时: {{time}} 秒</h5><br/>
+
+            <div id="content">
+                {%for art in list %}
+
+                <div class="card" style="width: 60rem;">
+
+                    <table class="table table-hover" style="padding:0px; margin:0px">
+                        <tbody style="padding:0px; margin:0px">
+                        <tr style="padding:0px; margin:0px">
+                            <td style="padding:0px; margin:0px">
+                                <div class="card-body">
+                                    <h5 class="card-title" >
+                                        <a href="{{art.url}}">
+                                        {{art.title |safe}}
+                                        </a>
+                                    </h5>
+                                    <!-- <p class="card-text">{{art.abstract}}</p> -->
+                                    <p class="card-text">Author: {{art.author |safe}} </p>
+                                    <p class="card-text">{{art.abstract |safe}}</p>
+                                    
+                                    <p class="card-text">Time: {{art.year}} &ensp; Cite: {{art.citation}} &ensp; Source: {{art.type}} &ensp;&ensp;
+                                        {%if art.favorite%}
+                                            <button id="{{art.id}}" type="button" class="btn btn-danger btn-sm" onclick="click_fav('{{art.id}}');">已收藏</button>
+                                        {%else%}
+                                            <button id="{{art.id}}" type="button" class="btn btn-outline-danger btn-sm" onclick="click_fav('{{art.id}}');">收藏</button>
+                                        {%endif%}
+                                    </p>
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                {%endfor%}
+            </div>
+            {% else %}
+            <div>搜索到0条结果</div>
+            {%endif%}
+
+
+            <br/><br/>
+
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-8">
+                    <nav aria-label="...">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="./?page=1">首页</a>
+                            </li>
+
+                            {%for i in allpage%}
+                            {%if i == page%}
+                            <li class="page-item active">
+      <span class="page-link">
+        {{i}}
+        <span class="page-item"></span>
+      </span>
+                            </li>
+                            {%else%}
+                            <li class="page-item"><a class="page-link" href="./?page={{i}}">{{i}}</a></li>
+                            {%endif%}
+                            {%endfor%}
+
+
+                            <li class="page-item">
+                                <a class="page-link" href="./?page={{maxPage}}">末页</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col"></div>
+            </div>
+
+
+        </div>
+        </div>
+    </div>
+
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+                integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+                integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+                crossorigin="anonymous"></script>
+        <!-- <script src="/static/request.js"></script> -->
+</body>
+
+</html>
+
+<script type="text/javascript">
+    function click_fav(id) {
+        var is_login = "{{status}}"
+        console.log("id", id)
+        console.log('status', is_login)
+        if (is_login == "False") {
+            console.log('redirect')
+            window.location.href='/Paper/login'
+            return
+        }
+        console.log(document.getElementById(id))
+        
+        $.ajax({
+            url: "/click_fav/?id="+id
+            }).done(function() {
+                console.log('done')
+                if (document.getElementById(id).innerText == "已收藏") {
+                    document.getElementById(id).innerText = "收藏"
+                    $("#"+id).removeClass('btn btn-danger btn-sm').addClass('btn btn-outline-danger btn-sm');
+                } else {
+                    document.getElementById(id).innerText = "已收藏"
+                    $("#"+id).removeClass('btn btn-outline-danger btn-sm').addClass('btn btn-danger btn-sm');
+                }
+                
+            });
+    }
+    // function cancle_fav(id) {
+    //     var is_login = "{{status}}"
+    //     console.log("id", id)
+    //     console.log('status', is_login)
+    //     if (is_login == "False") {
+    //         console.log('redirect')
+    //         window.location.href='/Paper/login'
+    //     }
+        
+    //     console.log('test')
+    //     $.ajax({
+    //         url: "/cancle_fav/?id="+id
+    //         }).done(function() {
+    //             console.log('done')
+    //             document.getElementById(id).innerText = "收藏"
+    //             // document.getElementById(id).onclick = add_fav(id)
+    //         });
+    // }
+    function getKey()
+    {
+        var key = document.getElementById('input').value;
+        console.log(key)
+        if (key != ""){
+            window.location.href='/Paper/searchAll/keyword=' + key+'/?page=1';
+        }
+    }
+
+    function highLight(s)
+    {
+        var contents = document.getElementsByClassName("card-text");
+        for (c = 0; c < contents.length; c++) {
+            var content = contents[c];
+            console.log('content', c, content);
+            var str = content.innerHTML;
+            keywords = s.split(" ")
+            console.log(keywords)
+            for(i = 0; i < keywords.length; i++) {
+                if(keywords[i] != '+') {
+                    var reg = new RegExp("(" + keywords[i] + ")", "g");
+                    str = str.replace(reg, "<font color=#FF6633>$1</font>");
+                }
+            }
+            content.innerHTML = str;
+        }
+        
+    }
+
+
+
+    function searchAll()
+    {
+        var key = document.getElementById('input').value;
+        console.log('Keywords', key)
+        window.location.href='/Paper/searchAll/keyword=' + key+'/?page=1';
+    }
+
+    function searchByCite()
+    {
+        var key = document.getElementById('input').value;
+        window.location.href='/Paper/searchByCite/keyword=' + key+'/?page=1';
+    }
+
+    function searchByTime()
+    {
+        var key = document.getElementById('input').value;
+        window.location.href='/Paper/searchByTime/keyword=' + key+'/?page=1';
+    }
+
+    function Index()
+    {
+        window.location.href='/Paper/';
+    }
+
+
+
+    function searchAd()
+    {
+
+        var start = document.getElementById('start').value;
+        var end = document.getElementById('end').value;
+
+        if(start == "" && end == "") return false;
+        var startTime = "";
+        var endTime = "";
+        for(var i = 0; i < start.length; i++)
+        {
+            if(start[i] != '-')
+                startTime += start[i];
+        }
+        for(var i = 0; i < end.length; i++)
+        {
+            if(end[i] != '-')
+                endTime += end[i];
+        }
+
+        if(startTime == "" || endTime == "")
+        {
+            alert("输入时间有误");
+            return false;
+        }
+
+        if (startTime > endTime)
+        {
+            alert("输入时间有误");
+            return false;
+        }
+
+        var key = document.getElementById('input').value;
+        if (key != ""){
+
+        window.location.href='/Paper/searchAdvance'+startTime+endTime+'/keyword=' + key+'/?page=1';
+            return true;
+        }
+
+    }
+
+    // var s = document.getElementById('input').value;
+    // console.log('keywords', s)
+    // highLight(s);
+    
+
+</script>

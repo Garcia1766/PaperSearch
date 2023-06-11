@@ -1,0 +1,103 @@
+<!-- Modal -->
+<div class="modal fade" id="advanceModal" tabindex="-1" role="dialog" aria-labelledby="advanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="form col align-items-center" action="" name="search_form" method="GET" role="search"
+          style="height: inherit">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="advanceModalLabel">Advanced Search</h6>
+            </div>
+
+            <div class="row my-4 align-items-center" style="height: inherit">
+                <div class="form-group col align-items-center my-auto">
+                    <div class="input-group col">
+                        <input class="form-control" name="search_text" id="navbar_search" type="text"
+                               placeholder="Search" maxlength="100"
+                               value="{{search_text}}">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn"><span class="fui-search"></span></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-2 align-items-center" style="height: inherit">
+                <div class="col-md-1"></div>
+                <div class="col" style="height: fit-content">
+                    <label class="checkbox my-2" for="search_checkbox_all">
+                        <input type="checkbox" name="search_checkbox_all" value="all" id="search_checkbox_all"
+                               {% if "title,abstract,text,author,conference" in search_checkbox %}
+                        checked="checked" {% endif %}
+                        data-toggle="checkbox"
+                        class="custom-checkbox"
+                        onclick="checkbox_checkall(this, 'search_checkbox')"
+                        ><span class="icons"><span class="icon-unchecked"></span><span
+                            class="icon-checked"></span></span>
+                        <b>All</b>
+                    </label>
+                    <label class="checkbox my-2" for="search_checkbox_title">
+                        <input type="checkbox" name="search_checkbox" value="title" id="search_checkbox_title"
+                               {% if "title" in search_checkbox %} checked="checked" {% endif %}
+                        data-toggle="checkbox"
+                        class="custom-checkbox"
+                        onclick="checkbox_fixall('search_checkbox', 'search_checkbox_all')"
+                        ><span class="icons"><span class="icon-unchecked"></span><span
+                            class="icon-checked"></span></span>
+                        Title
+                    </label>
+                </div>
+
+                <div class="col" style="height: fit-content">
+                    <label class="checkbox mx-auto my-2" for="search_checkbox_abstract">
+                        <input type="checkbox" value="abstract" id="search_checkbox_abstract"
+                               {% if "abstract" in search_checkbox %} checked="checked" {% endif %}
+                        data-toggle="checkbox" name="search_checkbox"
+                        onclick="checkbox_fixall('search_checkbox', 'search_checkbox_all')"
+                        class="custom-checkbox"><span class="icons"><span class="icon-unchecked"></span><span
+                            class="icon-checked"></span></span>
+                        Abstract
+                    </label>
+                    <label class="checkbox mx-auto my-2" for="search_checkbox_text">
+                        <input type="checkbox" value="text" id="search_checkbox_text"
+                               {% if "text" in search_checkbox %} checked="checked" {% endif %}
+                        data-toggle="checkbox" name="search_checkbox"
+                        onclick="checkbox_fixall('search_checkbox', 'search_checkbox_all')"
+                        class="custom-checkbox"><span class="icons"><span class="icon-unchecked"></span><span
+                            class="icon-checked"></span></span>
+                        Text
+                    </label>
+                </div>
+
+                <div class="col" style="height: fit-content">
+                    <label class="checkbox mx-auto my-2" for="search_checkbox_author">
+                        <input type="checkbox" value="author" id="search_checkbox_author"
+                               {% if "author" in search_checkbox %} checked="checked" {% endif %}
+                        data-toggle="checkbox" name="search_checkbox"
+                        onclick="checkbox_fixall('search_checkbox', 'search_checkbox_all')"
+                        class="custom-checkbox"><span class="icons"><span class="icon-unchecked"></span><span
+                            class="icon-checked"></span></span>
+                        Author
+                    </label>
+                    <label class="checkbox mx-auto my-2" for="search_checkbox_conference">
+                        <input type="checkbox" value="conference" id="search_checkbox_conference"
+                               {% if "conference" in search_checkbox %} checked="checked" {% endif %}
+                        data-toggle="checkbox" name="search_checkbox"
+                        onclick="checkbox_fixall('search_checkbox', 'search_checkbox_all')"
+                        class="custom-checkbox"><span class="icons"><span class="icon-unchecked"></span><span
+                            class="icon-checked"></span></span>
+                        Conference
+                    </label>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+
+            <div class="row my-1 mx-2"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default m-auto" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-info m-auto">Search</button>
+            </div>
+        </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal -->
+</div>
